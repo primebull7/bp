@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Bull ($BP) — Fair Launch Solana Memecoin</title>
+<meta name="description" content="Prime Bull ($BP) — a fair-launch Solana memecoin. No presale, no team dump, built on Pump.fun.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Prime Bull ($BP)">
+<meta property="og:description" content="A fair-launch Solana memecoin. No presale, no team dump — just a bonding curve, a chart, and a herd ready to run.">
+<meta property="og:image" content="image.png">
+<meta property="og:type" content="website">
+
+<!-- 🔴 Place your bull artwork here, named exactly "image.png", in the SAME folder as this file -->
+<link rel="icon" href="image.png" type="image/png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!--
+  ================================================================
+  📧 CONTACT FORM — EMAILJS (reads at the bottom, near the JS code)
+  This library lets the form send real emails with no backend.
+  Setup steps are written as comments right above the JS that uses them.
+  ================================================================
+-->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<style>
+  :root{
+    --void:#060907;
+    --panel:#0b110d;
+    --surface:#0f1713;
+    --surface-2:#141f19;
+    --border:rgba(109,255,176,0.16);
+    --border-strong:rgba(109,255,176,0.45);
+    --bull:#00e676;
+    --bull-bright:#7dffc0;
+    --bull-deep:#0a3d24;
+    --bone:#eef4f0;
+    --muted:#93a89e;
+
+    --font-display:'Unbounded', sans-serif;
+    --font-body:'Manrope', sans-serif;
+    --font-mono:'Space Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:
+      radial-gradient(ellipse 80% 45% at 50% -8%, rgba(0,230,118,0.10), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0,230,118,0.05), transparent),
+      var(--void);
+    color:var(--bone);
+    font-family:var(--font-body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  img{ max-width:100%; display:block; }
+  section{ scroll-margin-top:88px; }
+  a{ color:inherit; text-decoration:none; }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 1.5rem;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    color:var(--bull-bright);
+    background:rgba(0,230,118,0.08);
+    border:1px solid var(--border);
+    padding:0.45rem 1rem;
+    border-radius:999px;
+  }
+
+  h1,h2,h3{ font-family:var(--font-display); font-weight:800; line-height:1.08; }
+
+  .section-head{ max-width:640px; margin-bottom:3rem; }
+  .section-head h2{ font-size:clamp(1.9rem,4vw,2.9rem); margin-top:0.75rem; }
+  .section-head p{ color:var(--muted); margin-top:0.9rem; font-size:1.05rem; }
+
+  /* ===== BUTTONS ===== */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:0.95rem;
+    padding:0.95rem 1.7rem;
+    border-radius:12px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--bull);
+    color:#04160c;
+    box-shadow:0 0 0 rgba(0,230,118,0);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(0,230,118,0.35);
+  }
+  .btn-secondary{
+    background:transparent;
+    color:var(--bone);
+    border-color:var(--border-strong);
+  }
+  .btn-secondary:hover{
+    border-color:var(--bull);
+    color:var(--bull-bright);
+    transform:translateY(-2px);
+  }
+  .btn-sm{ padding:0.6rem 1.2rem; font-size:0.85rem; border-radius:10px; }
+
+  /* ===== NAV ===== */
+  .nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:50;
+    padding:1.1rem 0;
+    transition:background .3s ease, border-color .3s ease, padding .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{
+    background:rgba(6,9,7,0.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+    padding:0.8rem 0;
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:0.65rem; font-family:var(--font-display); font-weight:800; font-size:1.05rem; letter-spacing:0.02em; }
+  .brand-logo{ width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid var(--border-strong); }
+  .nav-links{ display:flex; align-items:center; gap:2rem; }
+  .nav-links a{ font-size:0.92rem; font-weight:600; color:var(--muted); transition:color .2s ease; }
+  .nav-links a:hover{ color:var(--bull-bright); }
+  .nav-cta{ display:flex; align-items:center; gap:1.25rem; }
+  .menu-btn{ display:none; background:none; border:1px solid var(--border-strong); color:var(--bone); width:42px; height:42px; border-radius:10px; font-size:1.1rem; cursor:pointer; }
+
+  .mobile-menu{
+    display:none;
+    position:fixed; inset:0; z-index:49;
+    background:rgba(6,9,7,0.97);
+    backdrop-filter:blur(10px);
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:2rem;
+    transform:translateY(-100%);
+    transition:transform .35s ease;
+  }
+  .mobile-menu.open{ display:flex; transform:translateY(0); }
+  .mobile-menu a{ font-family:var(--font-display); font-size:1.4rem; font-weight:700; }
+  .mobile-menu .btn{ margin-top:1rem; }
+
+  /* ===== TICKER ===== */
+  .ticker-wrap{
+    margin-top:64px;
+    overflow:hidden;
+    border-bottom:1px solid var(--border);
+    background:var(--panel);
+  }
+  .ticker-track{
+    display:flex;
+    width:max-content;
+    animation:marquee 24s linear infinite;
+  }
+  .ticker-item{
+    font-family:var(--font-mono);
+    font-size:0.82rem;
+    letter-spacing:0.07em;
+    padding:0.7rem 1.4rem;
+    color:var(--bull-bright);
+    white-space:nowrap;
+  }
+  .ticker-dot{ color:var(--muted); }
+  @keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    padding:5.5rem 0 6rem;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    align-items:center;
+    gap:2rem;
+    min-height:88vh;
+  }
+  .hero-copy h1{
+    font-size:clamp(3rem,8vw,5.6rem);
+    margin-top:1.1rem;
+    background:linear-gradient(180deg, var(--bone) 25%, var(--bull-bright) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero-copy p{
+    color:var(--muted);
+    font-size:1.15rem;
+    max-width:520px;
+    margin-top:1.4rem;
+  }
+  .hero-actions{ display:flex; gap:1rem; margin-top:2.2rem; flex-wrap:wrap; }
+  .hero-fact{
+    margin-top:2rem;
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+  }
+  .hero-fact strong{ color:var(--bull-bright); font-weight:700; }
+
+  .hero-visual{
+    position:relative;
+    height:460px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .candles{
+    position:absolute;
+    inset:auto 0 0 0;
+    height:65%;
+    display:flex;
+    align-items:flex-end;
+    gap:0.55rem;
+    z-index:0;
+    opacity:0.4;
+  }
+  .candles span{
+    flex:1;
+    background:linear-gradient(180deg, var(--bull) 0%, var(--bull-deep) 100%);
+    height:var(--h);
+    border-radius:3px 3px 0 0;
+    transform:scaleY(0);
+    transform-origin:bottom;
+    animation:riseBar 1s cubic-bezier(.2,.8,.2,1) both;
+    animation-delay:var(--d);
+  }
+  .hero-glow{
+    position:absolute;
+    width:340px; height:340px;
+    left:50%; top:38%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(0,230,118,0.35), transparent 70%);
+    filter:blur(10px);
+    animation:pulseGlow 4s ease-in-out infinite;
+    z-index:0;
+  }
+  .hero-bull{
+    position:relative;
+    z-index:1;
+    max-width:340px;
+    max-height:400px;
+    width:auto;
+    object-fit:contain;
+    filter:drop-shadow(0 25px 45px rgba(0,230,118,0.35));
+    animation:floatY 6s ease-in-out infinite;
+    border-radius:18px;
+  }
+  @keyframes riseBar{ to{ transform:scaleY(1); } }
+  @keyframes pulseGlow{ 0%,100%{ opacity:.4; } 50%{ opacity:.75; } }
+  @keyframes floatY{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-16px);} }
+
+  /* ===== REVEAL ===== */
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  /* ===== ABOUT ===== */
+  .about{ padding:7rem 0; border-top:1px solid var(--border); }
+  .about .wrap{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:3.5rem; align-items:center; }
+  .about-copy p{ color:var(--muted); font-size:1.05rem; margin-bottom:1.2rem; }
+  .about-copy p strong{ color:var(--bone); }
+
+  .terminal{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:0.4rem;
+    padding:0.85rem 1.1rem;
+    border-bottom:1px solid var(--border);
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+  .terminal-bar .dot{ width:8px; height:8px; border-radius:50%; background:var(--bull); opacity:.5; }
+  .terminal-bar .dot:nth-child(2){ opacity:.75; }
+  .terminal-bar .dot:nth-child(3){ opacity:1; }
+  .terminal-row{
+    display:flex; justify-content:space-between;
+    padding:1rem 1.3rem;
+    font-family:var(--font-mono);
+    font-size:0.92rem;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .terminal-row:last-child{ border-bottom:none; }
+  .terminal-row span:first-child{ color:var(--muted); }
+  .terminal-row span:last-child{ color:var(--bull-bright); font-weight:700; }
+  .cursor{ display:inline-block; width:8px; background:var(--bull-bright); animation:blink 1s steps(1) infinite; margin-left:2px; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ===== CARD GRID BASE ===== */
+  .grid{ display:grid; gap:1.5rem; }
+  .grid-4{ grid-template-columns:repeat(4,1fr); }
+  .grid-3{ grid-template-columns:repeat(3,1fr); }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:1.9rem;
+    transition:transform .3s ease, border-color .3s ease, background .3s ease;
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:var(--border-strong);
+    background:var(--surface-2);
+  }
+
+  /* ===== TOKENOMICS ===== */
+  .tokenomics{ padding:6rem 0; }
+  .stat-card .label{ font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.06em; color:var(--muted); text-transform:uppercase; }
+  .stat-card .value{ font-family:var(--font-display); font-size:1.5rem; margin-top:0.6rem; color:var(--bull-bright); }
+
+  /* ===== FEATURES ===== */
+  .features{ padding:6rem 0; border-top:1px solid var(--border); }
+  .feature-card .icon{ width:44px; height:44px; margin-bottom:1.1rem; color:var(--bull); }
+  .feature-card h3{ font-size:1.15rem; margin-bottom:0.6rem; }
+  .feature-card p{ color:var(--muted); font-size:0.95rem; }
+
+  /* ===== HOW TO BUY ===== */
+  .how{ padding:6rem 0; border-top:1px solid var(--border); }
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; position:relative; }
+  .step{ position:relative; }
+  .step .num{
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    color:var(--bull-bright);
+    border:1px solid var(--border-strong);
+    width:34px; height:34px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:1rem;
+  }
+  .step h3{ font-size:1.05rem; margin-bottom:0.5rem; }
+  .step p{ color:var(--muted); font-size:0.92rem; }
+
+  /* ===== CONTACT ===== */
+  .contact{ padding:6rem 0; border-top:1px solid var(--border); }
+  .contact .wrap{ display:grid; grid-template-columns:0.8fr 1.2fr; gap:3.5rem; }
+  .contact-intro p{ color:var(--muted); margin-top:1rem; }
+  .contact-form{ display:flex; flex-direction:column; gap:1.1rem; }
+  .form-row{ display:flex; flex-direction:column; gap:0.5rem; }
+  .form-row label{ font-size:0.85rem; color:var(--muted); font-family:var(--font-mono); }
+  .form-row input, .form-row textarea{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0.9rem 1rem;
+    color:var(--bone);
+    font-family:var(--font-body);
+    font-size:0.95rem;
+    resize:vertical;
+    transition:border-color .2s ease;
+  }
+  .form-row input:focus, .form-row textarea:focus{ outline:none; border-color:var(--bull); }
+  .form-status{ font-family:var(--font-mono); font-size:0.85rem; min-height:1.2em; }
+  .form-status.success{ color:var(--bull-bright); }
+  .form-status.error{ color:#ff8a8a; }
+
+  /* ===== MORE PROJECTS ===== */
+  .more-projects{ padding:3.5rem 0; border-top:1px solid var(--border); text-align:center; }
+  .more-projects-label{ font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase; margin-bottom:1rem; }
+  .project-badge{
+    display:inline-flex;
+    width:60px; height:60px;
+    border-radius:50%;
+    overflow:hidden;
+    border:1px solid var(--border-strong);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .project-badge:hover{ transform:scale(1.08); box-shadow:0 0 25px rgba(0,230,118,0.35); }
+  .project-badge img{ width:100%; height:100%; object-fit:cover; }
+
+  /* ===== FOOTER ===== */
+  .footer{ padding:3.5rem 0 2.5rem; border-top:1px solid var(--border); }
+  .footer-top{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:2rem; margin-bottom:2.2rem; }
+  .footer-brand{ display:flex; align-items:center; gap:0.6rem; font-family:var(--font-display); font-weight:800; }
+  .footer-brand img{ width:30px; height:30px; border-radius:50%; }
+  .socials{ display:flex; gap:0.9rem; }
+  .socials a{
+    width:40px; height:40px;
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .socials a:hover{ color:var(--bull-bright); border-color:var(--bull); }
+  .disclaimer{ color:var(--muted); font-size:0.82rem; max-width:760px; line-height:1.7; border-top:1px solid var(--border); padding-top:1.6rem; }
+  .copyright{ color:var(--muted); font-size:0.8rem; margin-top:1.2rem; font-family:var(--font-mono); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width:980px){
+    .grid-4{ grid-template-columns:repeat(2,1fr); }
+    .grid-3{ grid-template-columns:repeat(2,1fr); }
+    .steps{ grid-template-columns:repeat(2,1fr); }
+    .about .wrap{ grid-template-columns:1fr; }
+    .contact .wrap{ grid-template-columns:1fr; }
+    .hero{ grid-template-columns:1fr; text-align:center; padding-top:3rem; }
+    .hero-copy p{ margin-left:auto; margin-right:auto; }
+    .hero-actions{ justify-content:center; }
+    .hero-fact{ justify-content:center; }
+    .hero-visual{ order:-1; height:340px; }
+  }
+
+  @media (max-width:720px){
+    .nav-links{ display:none; }
+    .nav-cta .btn-sm{ display:none; }
+    .menu-btn{ display:flex; align-items:center; justify-content:center; }
+    .grid-4{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr; }
+    .footer-top{ flex-direction:column; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--bull);
+    outline-offset:3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a href="#hero" class="brand">
+      <!-- 🔴 Uses the same "image.png" as the hero -->
+      <img src="image.png" alt="Prime Bull logo" class="brand-logo">
+      <span>PRIME BULL</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#tokenomics">Tokenomics</a>
+      <a href="#how-to-buy">How to Buy</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-cta">
+      <!-- 🔴 REPLACE this href with your live Pump.fun coin link once $BP is minted -->
+      <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Buy $BP</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#tokenomics" class="mobile-link">Tokenomics</a>
+  <a href="#how-to-buy" class="mobile-link">How to Buy</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+  <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Buy $BP</a>
+</div>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">$BP</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">SOLANA NETWORK</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">FAIR LAUNCH ON PUMP.FUN</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">ZERO TEAM DUMP</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">COMMUNITY OWNED</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">THE HERD RUNS TOGETHER</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">$BP</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">SOLANA NETWORK</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">FAIR LAUNCH ON PUMP.FUN</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">ZERO TEAM DUMP</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">COMMUNITY OWNED</span><span class="ticker-dot">•</span>
+    <span class="ticker-item">THE HERD RUNS TOGETHER</span><span class="ticker-dot">•</span>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="wrap" style="display:contents;">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">$BP · SOLANA · FAIR LAUNCH</span>
+      <h1>PRIME BULL</h1>
+      <p>A fair-launch memecoin on Solana. No presale, no team dump — just a bonding curve, a chart, and a herd ready to run.</p>
+      <div class="hero-actions">
+        <!-- 🔴 REPLACE this href with your live Pump.fun coin link once $BP is minted -->
+        <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Buy $BP on Pump.fun</a>
+        <a href="#tokenomics" class="btn btn-secondary">View Tokenomics</a>
+      </div>
+      <div class="hero-fact">Owner wallet holds <strong>&lt;0.5%</strong> of total supply</div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="candles">
+        <span style="--h:38%; --d:.05s"></span>
+        <span style="--h:52%; --d:.1s"></span>
+        <span style="--h:44%; --d:.15s"></span>
+        <span style="--h:65%; --d:.2s"></span>
+        <span style="--h:58%; --d:.25s"></span>
+        <span style="--h:78%; --d:.3s"></span>
+        <span style="--h:70%; --d:.35s"></span>
+        <span style="--h:88%; --d:.4s"></span>
+        <span style="--h:80%; --d:.45s"></span>
+        <span style="--h:95%; --d:.5s"></span>
+        <span style="--h:86%; --d:.55s"></span>
+        <span style="--h:100%; --d:.6s"></span>
+      </div>
+      <div class="hero-glow"></div>
+      <!-- 🔴 Place your Prime Bull artwork here, named exactly "image.png", in the SAME folder as this file -->
+      <img src="image.png" alt="Prime Bull mascot standing on a bullish candlestick chart" class="hero-bull">
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-copy reveal">
+      <span class="eyebrow">About</span>
+      <h2 style="margin-top:0.9rem;">The Herd Is Forming</h2>
+      <p><strong>Prime Bull ($BP)</strong> is a Solana memecoin built for one purpose: pure bull-market energy, distributed fairly from the first block. No private sale, no team allocation waiting to dump on early buyers — everyone enters through the same Pump.fun bonding curve.</p>
+      <p>Once $BP graduates, liquidity locks automatically through Pump.fun's bonding-curve mechanism — nobody, including the creator, can pull it. That's not a promise. That's just how the curve works.</p>
+    </div>
+    <div class="terminal reveal">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span style="margin-left:0.5rem;">$BP // status<span class="cursor">&nbsp;</span></span>
+      </div>
+      <div class="terminal-row"><span>Ticker</span><span>$BP</span></div>
+      <div class="terminal-row"><span>Chain</span><span>Solana</span></div>
+      <div class="terminal-row"><span>Launch type</span><span>Fair / Bonding Curve</span></div>
+      <div class="terminal-row"><span>Team allocation</span><span>&lt; 0.5%</span></div>
+      <div class="terminal-row"><span>Liquidity</span><span>Burned on graduation</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOKENOMICS ===== -->
+<section class="tokenomics" id="tokenomics">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Tokenomics</span>
+      <h2>No Fine Print</h2>
+      <p>Everything that matters about $BP, laid out plainly. Nothing hidden in a whitepaper nobody reads.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card stat-card reveal">
+        <div class="label">Ticker</div>
+        <div class="value">$BP</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Network</div>
+        <div class="value">Solana</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Total Supply</div>
+        <div class="value">1,000,000,000</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Owner Holding</div>
+        <div class="value">&lt; 0.5%</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Liquidity</div>
+        <div class="value">Burned</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Buy Tax</div>
+        <div class="value">0%</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Sell Tax</div>
+        <div class="value">0%</div>
+      </div>
+      <div class="card stat-card reveal">
+        <div class="label">Presale</div>
+        <div class="value">None</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="why">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Why Prime Bull</span>
+      <h2>Bred For The Bull Run</h2>
+    </div>
+    <div class="grid grid-4">
+      <div class="card feature-card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>
+        <h3>Fair Launch, Full Stop</h3>
+        <p>No presale, no team dump. Every wallet buys through the same bonding curve, at the same rules.</p>
+      </div>
+      <div class="card feature-card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>
+        <h3>Solana Speed</h3>
+        <p>Sub-second trades and fractions-of-a-cent fees — built for a chart that doesn't wait around.</p>
+      </div>
+      <div class="card feature-card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3 6 6 1-4.5 4 1 6L12 16l-5.5 3 1-6L3 9l6-1z"/></svg>
+        <h3>Owner Skin Below 0.5%</h3>
+        <p>The team wallet holds under half a percent of supply. This herd runs on community bags, not insider ones.</p>
+      </div>
+      <div class="card feature-card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        <h3>Built For The Culture</h3>
+        <p>Made for the timeline, the group chats, and everyone who buys the dip and holds through the wick.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW TO BUY ===== -->
+<section class="how" id="how-to-buy">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">How to Buy</span>
+      <h2>Join The Herd In 4 Steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="num">1</div>
+        <h3>Get a wallet</h3>
+        <p>Install Phantom (or any Solana wallet) from the official app store or browser extension.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">2</div>
+        <h3>Fund with SOL</h3>
+        <p>Buy SOL on any exchange and send it to your new wallet address.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">3</div>
+        <h3>Open Pump.fun</h3>
+        <p>Search $BP or paste the Prime Bull contract address directly into Pump.fun.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">4</div>
+        <h3>Swap for $BP</h3>
+        <p>Confirm the swap in your wallet. Welcome to the herd.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="contact-intro reveal">
+      <span class="eyebrow">Contact</span>
+      <h2 style="margin-top:0.9rem;">Get In Touch</h2>
+      <p>Questions, partnerships, or press — drop a message and the team will get back to you.</p>
+    </div>
+    <form class="contact-form reveal" id="contactForm">
+      <div class="form-row">
+        <label for="user_name">Name</label>
+        <input type="text" id="user_name" name="user_name" placeholder="Your name" required>
+      </div>
+      <div class="form-row">
+        <label for="user_email">Email</label>
+        <input type="email" id="user_email" name="user_email" placeholder="you@email.com" required>
+      </div>
+      <div class="form-row">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" placeholder="Tell us what's on your mind" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+      <p class="form-status" id="formStatus" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ===== MORE PROJECTS ===== -->
+<section class="more-projects reveal">
+  <div class="wrap">
+    <p class="more-projects-label">More Projects</p>
+    <a href="https://suimeme.github.io/SUIMeme/?#hero" target="_blank" rel="noopener noreferrer" class="project-badge" aria-label="Visit the SUIMeme website">
+      <!-- 🔴 Place your SUIMeme logo here, named exactly "suiii.png", in the SAME folder as this file -->
+      <img src="suiii.png" alt="SUIMeme logo">
+    </a>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <!-- 🔴 Uses the same "image.png" as the hero/nav -->
+        <img src="image.png" alt="Prime Bull logo">
+        <span>PRIME BULL</span>
+      </div>
+      <div class="socials">
+        <!-- 🔴 REPLACE href="#" below with your real X (Twitter) link -->
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Prime Bull on X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7.1l-5.6-6.8L4.2 22H1l8.1-9.3L1 2h7.3l5 6.2L18.9 2Zm-1.2 18h1.9L7.4 4h-2l12.3 16Z"/></svg>
+        </a>
+        <!-- 🔴 REPLACE href="#" below with your real Telegram link -->
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Prime Bull on Telegram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 2.7 11.7c-1.2.5-1.2 1.2-.2 1.5l4.9 1.5 1.9 5.8c.2.6.4.9.9.9.4 0 .6-.2.9-.5l2.2-2.1 4.6 3.4c.8.5 1.4.2 1.6-.8l3-14.1c.3-1.3-.5-1.8-1.6-1z"/></svg>
+        </a>
+        <!-- 🔴 REPLACE href="#" below with your live Pump.fun coin link -->
+        <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" aria-label="Prime Bull on Pump.fun">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>
+        </a>
+      </div>
+    </div>
+    <p class="disclaimer">$BP (Prime Bull) is a community memecoin created for entertainment and cultural purposes. It has no intrinsic value and no expectation of financial return. Cryptocurrency carries significant risk, including total loss of funds — always do your own research before buying.</p>
+    <p class="copyright">© 2026 Prime Bull. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Nav background on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
+
+  // Scroll-reveal animations
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  /*
+    ================================================================
+    📧 EMAILJS SETUP — do this before the contact form will send mail
+    ================================================================
+    1. Create a free account at https://www.emailjs.com
+    2. Email Services -> Add New Service -> copy the SERVICE ID
+    3. Email Templates -> Create Template -> copy the TEMPLATE ID
+       (inside the template, use {{user_name}}, {{user_email}}, {{message}})
+    4. Account -> General -> copy your PUBLIC KEY
+    5. Paste all three values into the three lines marked 🔴 below
+    ================================================================
+  */
+
+  // 🔴 PASTE YOUR EMAILJS PUBLIC KEY HERE
+  emailjs.init("YOUR_PUBLIC_KEY");
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    status.textContent = 'Sending...';
+    status.className = 'form-status';
+
+    emailjs.sendForm(
+      'YOUR_SERVICE_ID',   // 🔴 PASTE YOUR EMAILJS SERVICE ID HERE
+      'YOUR_TEMPLATE_ID',  // 🔴 PASTE YOUR EMAILJS TEMPLATE ID HERE
+      this
+    ).then(function () {
+      status.textContent = 'Message sent — the herd will reply soon.';
+      status.classList.add('success');
+      form.reset();
+    }, function () {
+      status.textContent = 'Something went wrong. Please try again.';
+      status.classList.add('error');
+    });
+  });
+</script>
+
+</body>
+</html>
